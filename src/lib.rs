@@ -1,3 +1,4 @@
+mod error;
 mod transaction;
 
 pub type ClientId = u16;
