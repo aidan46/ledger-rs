@@ -28,7 +28,7 @@ pub enum Transaction {
 }
 
 #[derive(Debug)]
-enum TransactionState {
+pub(crate) enum TransactionState {
     Normal,
     Disputed,
     ResolvedOrChargedback,
