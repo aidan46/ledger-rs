@@ -31,7 +31,7 @@ pub enum Transaction {
 pub(crate) enum TransactionState {
     Normal,
     Disputed,
-    ResolvedOrChargedback,
+    Chargedback,
 }
 
 impl Transaction {

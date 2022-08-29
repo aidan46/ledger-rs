@@ -95,7 +95,7 @@ impl Account {
             Entry::Vacant(..) => return Err(Error::TransactionNotFound(id, self.id)),
             Entry::Occupied(mut entry) => match entry.get() {
                 TransactionState::Disputed => return Err(Error::AlreadyDisputed(id)),
-                TransactionState::ResolvedOrChargedback => return Err(Error::DisputedSolved(id)),
+                TransactionState::Chargedback => return Err(Error::AlreadyChargedBack(id)),
                 TransactionState::Normal => {
                     entry.insert(TransactionState::Disputed);
                 }
@@ -120,10 +120,10 @@ impl Account {
         match self.tx_state.entry(id) {
             Entry::Vacant(..) => return Err(Error::TransactionNotFound(id, self.id)),
             Entry::Occupied(mut entry) => match entry.get() {
-                TransactionState::ResolvedOrChargedback => return Err(Error::DisputedSolved(id)),
                 TransactionState::Normal => return Err(Error::NotInDispute(id)),
+                TransactionState::Chargedback => return Err(Error::AlreadyChargedBack(id)),
                 TransactionState::Disputed => {
-                    entry.insert(TransactionState::ResolvedOrChargedback);
+                    entry.insert(TransactionState::Normal);
                 }
             },
         }
@@ -146,10 +146,10 @@ impl Account {
         match self.tx_state.entry(id) {
             Entry::Vacant(..) => return Err(Error::TransactionNotFound(id, self.id)),
             Entry::Occupied(mut entry) => match entry.get() {
-                TransactionState::ResolvedOrChargedback => return Err(Error::DisputedSolved(id)),
                 TransactionState::Normal => return Err(Error::NotInDispute(id)),
+                TransactionState::Chargedback => return Err(Error::AlreadyChargedBack(id)),
                 TransactionState::Disputed => {
-                    entry.insert(TransactionState::ResolvedOrChargedback);
+                    entry.insert(TransactionState::Chargedback);
                 }
             },
         }
@@ -283,7 +283,7 @@ mod tests {
         assert!(account.transactions.contains_key(&id));
         assert!(account.tx_state.contains_key(&id));
         let state = account.tx_state.get(&id).unwrap();
-        assert!(matches!(state, TransactionState::ResolvedOrChargedback));
+        assert!(matches!(state, TransactionState::Normal));
     }
 
     #[test]
@@ -314,7 +314,7 @@ mod tests {
         assert!(account.transactions.contains_key(&id));
         assert!(account.tx_state.contains_key(&id));
         let state = account.tx_state.get(&id).unwrap();
-        assert!(matches!(state, TransactionState::ResolvedOrChargedback));
+        assert!(matches!(state, TransactionState::Chargedback));
     }
 
     // All error cases
@@ -374,7 +374,7 @@ mod tests {
         assert!(account.transactions.contains_key(&id));
         assert!(account.tx_state.contains_key(&id));
         let state = account.tx_state.get(&id).unwrap();
-        assert!(matches!(state, TransactionState::ResolvedOrChargedback));
+        assert!(matches!(state, TransactionState::Chargedback));
     }
 
     #[test]
@@ -413,33 +413,6 @@ mod tests {
 
         // Assert
         assert!(matches!(result, Err(Error::InsufficientFunds(..))));
-    }
-
-    #[test]
-    fn dispute_solved() {
-        // Setup
-        let id = 1;
-        let client = 1;
-        let amount = Decimal::new(2, 0);
-        let mut account = Account::new(client);
-        let tx = Transaction::Deposit { id, client, amount };
-
-        assert!(account.process_tx(tx).is_ok());
-
-        assert!(account
-            .process_tx(Transaction::Dispute { id, client })
-            .is_ok());
-        assert!(account
-            .process_tx(Transaction::Resolve { id, client })
-            .is_ok());
-
-        let tx = Transaction::Dispute { id, client };
-
-        // Act
-        let result = account.process_tx(tx);
-
-        // Assert
-        assert!(matches!(result, Err(Error::DisputedSolved(..))));
     }
 
     #[test]

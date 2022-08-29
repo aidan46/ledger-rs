@@ -18,10 +18,10 @@ pub enum Error {
     NotInDispute(TxId),
     #[error("Transaction with ID {0} has been or is already disputed!")]
     AlreadyDisputed(TxId),
-    #[error("Transaction with ID {0} disputed has already been solved!")]
-    DisputedSolved(TxId),
     #[error("Amount has to be above zero")]
     AmountTooLow,
     #[error("Transaction with ID {0} already exists!")]
     DuplicateTxId(TxId),
+    #[error("Transaction with ID {0} has already been charged back")]
+    AlreadyChargedBack(TxId),
 }
