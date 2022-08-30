@@ -1,4 +1,4 @@
-# 📒-ledger-rs
+# 📒 ledger-rs
 A transaction processor that computes final balances for accounts
 
 ## Binary details
