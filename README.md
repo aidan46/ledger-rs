@@ -2,6 +2,7 @@
 A transaction processor that computes final balances for accounts
 
 ## Binary details
+### Usage
 The `csv_ledger` binary parses transactions and computes the final balances for accounts.
 The following operations are supported:
 ```bash
@@ -15,12 +16,15 @@ ARGS:
     <PATH>    Input file
 
 OPTIONS:
-    -d, --debug      Debug mode
+    -d, --debug      Debug mode; Log to stdout
     -h, --help       Print help information
     -s, --sort       Sort output accounts on ClientId
     -V, --version    Print version information
 ```
 For more information on the binary input and output see `More` down below 
+
+### Test coverage
+Test for the `csv_ledger` binary are in the `tests/` folder. In the `test/data/` folder there are test input files (`.csv`) and expected output files (`.out`).
 
 ## Library details
 The `Ledger` in the `ledger-rs` library holds all accounts in a `HashMap<ClientId, Account>`. It also holds the transaction IDs in a `HashSet<TxId>` to prevent duplicate transaction IDs.
@@ -95,8 +99,6 @@ The library errors can be found in `src/error.rs`. These errors are:
 ### Test coverage
 All `Account` methods are unit tested in the file `src/account.rs`.
 All the error cases for `Ledger` are tested in `src/ledger.rs`.
-Methods for `Ledger` call `Account` methods so only the unique error cases are tested.
-Integration tests have been added in the `tests/` folders.
 
 ### External Crates
 `clap`:
@@ -145,4 +147,3 @@ client,available,held,total,
 2,2,0,2,false
 1,1.5,0,1.5,false
 ```
-
