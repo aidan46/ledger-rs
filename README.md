@@ -21,7 +21,7 @@ OPTIONS:
     -s, --sort       Sort output accounts on ClientId
     -V, --version    Print version information
 ```
-For more information on the binary input and output see `More` down below 
+For more information on the binary input and output see [down below](#more).
 
 ### Test coverage
 Test for the `csv_ledger` binary are in the `tests/` folder. In the `test/data/` folder there are test input files (`.csv`) and expected output files (`.out`).
