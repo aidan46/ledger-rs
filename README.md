@@ -73,7 +73,7 @@ held funds -= amount
 total funds -= amount
 ```
 
-Once a transaction has been charged back the account locks. A transaction cannot be disputed after it has been charged back.
+Once a transaction has been charged back the account locks. A transaction cannot be disputed after it has been charged back; assuming the account gets unlocked at some point.
 
 ### Assumptions
 - Transaction ID's are globally unique.
@@ -92,7 +92,7 @@ The library errors can be found in `src/error.rs`. These errors are:
 - TransactionNotFound => Transaction is not found for given account.
 - NotInDispute => Transaction is not in dispute (for Resolve and Chargeback).
 - AlreadyDisputed => Transaction has previously been disputed, prevents double disputes.
-- AlreadyChargedBack => Transaction has already been charged back".
+- AlreadyChargedBack => Transaction has already been charged back.
 - AmountTooLow => Given amount <= Decimal::ZERO.
 - DuplicateTxId => Transaction ID's must be globally unique.
 
